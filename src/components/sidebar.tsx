@@ -23,7 +23,7 @@ export function Sidebar(){
       <Link href="/fornecedores">Fornecedores</Link>
       <Link href="/clientes">Clientes</Link>
       <Link href="/relatorios">Relatórios</Link>
-      <Link href="/ia">Assistente IA</Link>
+      <Link href="/equipe">Equipe</Link>\n      <Link href="/ia">Assistente IA</Link>
     </nav>
     <button className="btn secondary" onClick={logout}>Sair</button>
   </aside>;
