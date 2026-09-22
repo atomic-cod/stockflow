@@ -18,7 +18,7 @@ export default function Produtos(){
     catch(e:any){setError(e.message??"Não foi possível carregar os produtos.")}
     finally{setLoading(false)}
   }
-  useEffect(()=>{load()},[]);
+  useEffect(()=>{const initial=new URLSearchParams(window.location.search).get("q")||"";setQ(initial);load(initial)},[]);
   const low=useMemo(()=>products.filter(p=>Number(p.stock_quantity)<=Number(p.minimum_stock)),[products]);
   const value=useMemo(()=>products.reduce((s,p)=>s+Number(p.stock_quantity)*Number(p.sale_price),0),[products]);
 
