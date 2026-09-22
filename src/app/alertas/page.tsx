@@ -1,48 +1,18 @@
+"use client";
+import { useEffect,useMemo,useState } from "react";
 import Link from "next/link";
 import { Sidebar } from "@/components/sidebar";
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-
-export default async function Alertas() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: products } = await supabase
-    .from("products")
-    .select("id,name,sku,stock_quantity,minimum_stock,maximum_stock,expiry_date,active")
-    .eq("active", true)
-    .order("name");
-
-  const now = new Date();
-  const inThirtyDays = new Date(now);
-  inThirtyDays.setDate(inThirtyDays.getDate() + 30);
-
-  const low = (products ?? []).filter(p => Number(p.stock_quantity) <= Number(p.minimum_stock));
-  const expiring = (products ?? []).filter(p => {
-    if (!p.expiry_date) return false;
-    const date = new Date(p.expiry_date + "T00:00:00");
-    return date <= inThirtyDays;
-  });
-  const outOfStock = (products ?? []).filter(p => Number(p.stock_quantity) <= 0);
-
-  return <div className="shell"><Sidebar/><main className="main">
-    <div className="topbar"><div><h1 className="title">Alertas</h1><p className="muted">Itens que precisam de atenção operacional.</p></div></div>
-
-    <section className="grid">
-      <div className="card"><span className="muted">Sem estoque</span><div className="stat">{outOfStock.length}</div></div>
-      <div className="card"><span className="muted">Estoque baixo</span><div className="stat">{low.length}</div></div>
-      <div className="card"><span className="muted">Validade em até 30 dias</span><div className="stat">{expiring.length}</div></div>
-    </section>
-
-    <section className="section card"><h2>Estoque crítico</h2><div className="table-wrap"><table className="table">
-      <thead><tr><th>Produto</th><th>SKU</th><th>Atual</th><th>Mínimo</th><th>Máximo</th><th>Ação</th></tr></thead>
-      <tbody>{low.map(p=><tr key={p.id}><td><b>{p.name}</b></td><td>{p.sku}</td><td>{p.stock_quantity}</td><td>{p.minimum_stock}</td><td>{p.maximum_stock ?? "—"}</td><td><Link className="btn secondary" href={"/produtos/"+p.id}>Abrir</Link></td></tr>)}{!low.length&&<tr><td colSpan={6}>Nenhum item abaixo do mínimo.</td></tr>}</tbody>
-    </table></div></section>
-
-    <section className="section card"><h2>Validade próxima</h2><div className="table-wrap"><table className="table">
-      <thead><tr><th>Produto</th><th>SKU</th><th>Validade</th><th>Estoque</th></tr></thead>
-      <tbody>{expiring.map(p=><tr key={p.id}><td><b>{p.name}</b></td><td>{p.sku}</td><td>{p.expiry_date ? new Date(p.expiry_date+"T00:00:00").toLocaleDateString("pt-BR") : "—"}</td><td>{p.stock_quantity}</td></tr>)}{!expiring.length&&<tr><td colSpan={4}>Nenhuma validade próxima.</td></tr>}</tbody>
-    </table></div></section>
-  </main></div>;
+type Product={id:string;name:string;sku:string;stock_quantity:number;minimum_stock:number;expiry_date?:string};
+export default function Alertas(){
+ const [products,setProducts]=useState<Product[]>([]),[loading,setLoading]=useState(true),[error,setError]=useState("");
+ useEffect(()=>{fetch("/api/produtos").then(async r=>{const d=await r.json();if(!r.ok)throw Error(d.error);setProducts(d.products||[])}).catch(e=>setError(e.message)).finally(()=>setLoading(false))},[]);
+ const low=useMemo(()=>products.filter(p=>Number(p.stock_quantity)<=Number(p.minimum_stock)),[products]);
+ const out=useMemo(()=>products.filter(p=>Number(p.stock_quantity)<=0),[products]);
+ const exp=useMemo(()=>products.filter(p=>p.expiry_date&&new Date(p.expiry_date+"T23:59:59").getTime()<=Date.now()+30*86400000),[products]);
+ return <div className="shell"><Sidebar/><main className="main"><div className="topbar"><div><div className="eyebrow">CENTRAL DE CONTROLE</div><h1 className="title">Alertas</h1><p className="muted">Priorize o que precisa de ação antes que vire problema.</p></div><Link className="btn" href="/produtos">Abrir catálogo</Link></div>
+ <section className="dashboard-kpis"><div className="dash-kpi amber"><div className="kpi-icon">!</div><div><span>Estoque baixo</span><strong>{low.length}</strong><small>abaixo do mínimo</small></div></div><div className="dash-kpi violet"><div className="kpi-icon">0</div><div><span>Sem estoque</span><strong>{out.length}</strong><small>ação imediata</small></div></div><div className="dash-kpi cyan"><div className="kpi-icon">◷</div><div><span>Validade próxima</span><strong>{exp.length}</strong><small>próximos 30 dias</small></div></div></section>
+ {error&&<div className="card section"><b>Não foi possível carregar os alertas.</b><p className="muted">{error}</p></div>}
+ <section className="section dashboard-layout"><div className="dash-panel"><div className="panel-head"><div><div className="eyebrow">REPOSIÇÃO</div><h2>Produtos abaixo do mínimo</h2></div></div><div className="table-wrap"><table className="table"><thead><tr><th>Produto</th><th>Estoque</th><th>Mínimo</th><th>Gap</th><th>Ação</th></tr></thead><tbody>{loading?<tr><td colSpan={5}>Carregando...</td></tr>:low.map(p=><tr key={p.id}><td><b>{p.name}</b><small>{p.sku}</small></td><td>{p.stock_quantity}</td><td>{p.minimum_stock}</td><td><span className="status danger">-{Math.max(0,Number(p.minimum_stock)-Number(p.stock_quantity))}</span></td><td><Link className="btn secondary" href={"/produtos/"+p.id}>Abrir</Link></td></tr>)}{!loading&&!low.length&&<tr><td colSpan={5}><div className="empty-state">✓ Nenhum alerta de estoque.</div></td></tr>}</tbody></table></div></div>
+ <div className="dash-panel"><div className="panel-head"><div><div className="eyebrow">VALIDADE</div><h2>Próximos 30 dias</h2></div></div>{exp.slice(0,8).map(p=><div className="activity-item" key={p.id}><div className="alert-symbol warning">◷</div><div className="activity-copy"><b>{p.name}</b><span>{p.expiry_date?new Date(p.expiry_date+"T00:00:00").toLocaleDateString("pt-BR"):"Sem data"}</span></div><Link className="panel-link" href={"/produtos/"+p.id}>Ver</Link></div>)}{!loading&&!exp.length&&<div className="empty-state">✓ Nenhuma validade próxima.</div>}</div></section>
+ </main></div>;
 }
