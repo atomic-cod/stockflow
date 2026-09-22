@@ -11,6 +11,8 @@ export function Sidebar(){
     <Link href="/dashboard">Dashboard</Link>
     <Link href="/produtos">Produtos</Link>
     <Link href="/categorias">Categorias</Link>
+    <Link href="/compras">Compras</Link>
+    <Link href="/vendas">Vendas</Link>
     <Link href="/entradas">Entradas</Link>
     <Link href="/saidas">Saídas</Link>
     <Link href="/fornecedores">Fornecedores</Link>
