@@ -98,13 +98,80 @@ alter table public.products enable row level security;
 alter table public.stock_movements enable row level security;
 
 create or replace function public.get_user_company_id()
-returns uuid language sql stable security definer set search_path=public
-as $$ select company_id from public.profiles where id=auth.uid() limit 1; $$;
+returns uuid
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select company_id from public.profiles where id = auth.uid() limit 1;
+$$;
 
-create policy if not exists "company members can view company" on public.companies for select to authenticated using (id=public.get_user_company_id());
-create policy if not exists "company members can view profiles" on public.profiles for select to authenticated using (company_id=public.get_user_company_id());
-create policy if not exists "company members can manage categories" on public.categories for all to authenticated using (company_id=public.get_user_company_id()) with check (company_id=public.get_user_company_id());
-create policy if not exists "company members can manage suppliers" on public.suppliers for all to authenticated using (company_id=public.get_user_company_id()) with check (company_id=public.get_user_company_id());
-create policy if not exists "company members can manage customers" on public.customers for all to authenticated using (company_id=public.get_user_company_id()) with check (company_id=public.get_user_company_id());
-create policy if not exists "company members can manage products" on public.products for all to authenticated using (company_id=public.get_user_company_id()) with check (company_id=public.get_user_company_id());
-create policy if not exists "company members can view movements" on public.stock_movements for select to authenticated using (company_id=public.get_user_company_id());
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  new_company_id uuid;
+  user_name text;
+  company_name text;
+begin
+  user_name := coalesce(nullif(trim(new.raw_user_meta_data->>'full_name'), ''), 'Usuário');
+  company_name := coalesce(nullif(trim(new.raw_user_meta_data->>'company_name'), ''), 'Minha empresa');
+
+  insert into public.companies (name, email)
+  values (company_name, new.email)
+  returning id into new_company_id;
+
+  insert into public.profiles (id, company_id, full_name, role)
+  values (new.id, new_company_id, user_name, 'admin');
+
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+after insert on auth.users
+for each row execute function public.handle_new_user();
+
+drop policy if exists "company members can view company" on public.companies;
+create policy "company members can view company"
+on public.companies for select to authenticated
+using (id = public.get_user_company_id());
+
+drop policy if exists "company members can view profiles" on public.profiles;
+create policy "company members can view profiles"
+on public.profiles for select to authenticated
+using (company_id = public.get_user_company_id());
+
+drop policy if exists "company members can manage categories" on public.categories;
+create policy "company members can manage categories"
+on public.categories for all to authenticated
+using (company_id = public.get_user_company_id())
+with check (company_id = public.get_user_company_id());
+
+drop policy if exists "company members can manage suppliers" on public.suppliers;
+create policy "company members can manage suppliers"
+on public.suppliers for all to authenticated
+using (company_id = public.get_user_company_id())
+with check (company_id = public.get_user_company_id());
+
+drop policy if exists "company members can manage customers" on public.customers;
+create policy "company members can manage customers"
+on public.customers for all to authenticated
+using (company_id = public.get_user_company_id())
+with check (company_id = public.get_user_company_id());
+
+drop policy if exists "company members can manage products" on public.products;
+create policy "company members can manage products"
+on public.products for all to authenticated
+using (company_id = public.get_user_company_id())
+with check (company_id = public.get_user_company_id());
+
+drop policy if exists "company members can view movements" on public.stock_movements;
+create policy "company members can view movements"
+on public.stock_movements for select to authenticated
+using (company_id = public.get_user_company_id());
