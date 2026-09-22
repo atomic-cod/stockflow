@@ -15,14 +15,13 @@ export async function POST(request: Request){
   });
   if(error) return NextResponse.json({error:error.message},{status:400});
   return NextResponse.json({sale_id:data},{status:201});
+}
 
 export async function GET() {
   const supabase=await createClient();
   const {data:{user}}=await supabase.auth.getUser();
   if(!user) return NextResponse.json({error:"Não autenticado."},{status:401});
-  const table="sales";
-  const select="id,customer_id,total,status,notes,created_at";
-  const {data,error}=await supabase.from(table).select(select).order("created_at",{ascending:false}).limit(100);
+  const {data,error}=await supabase.from("sales").select("id,customer_id,total,status,notes,created_at").order("created_at",{ascending:false}).limit(100);
   if(error) return NextResponse.json({error:error.message},{status:400});
   return NextResponse.json({items:data??[]});
 }
@@ -34,7 +33,7 @@ export async function DELETE(request: Request) {
   const body=await request.json();
   const id=String(body.sale_id??"");
   if(!id) return NextResponse.json({error:"Identificador obrigatório."},{status:400});
-  const {error}=await supabase.rpc("cancel_sale", { p_sale_id: id });
+  const {error}=await supabase.rpc("cancel_sale",{p_sale_id:id});
   if(error) return NextResponse.json({error:error.message},{status:400});
   return NextResponse.json({message:"Venda cancelada e estoque revertido."});
 }
