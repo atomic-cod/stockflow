@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function Home(){return <main className="login"><div className="login-card"><h1>StockFlow</h1><p className="muted">Controle de estoque inteligente para sua empresa.</p><Link className="btn" href="/dashboard">Abrir dashboard</Link></div></main>}
