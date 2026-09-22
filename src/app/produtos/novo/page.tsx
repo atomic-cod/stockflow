@@ -1,0 +1,2 @@
+import { Sidebar } from "@/components/sidebar";
+export default function NovoProduto(){return <div className="shell"><Sidebar/><main className="main"><h1 className="title">Novo produto</h1><div className="section card"><label>Nome<input className="input"/></label><label>SKU<input className="input"/></label><label>Código de barras<input className="input"/></label><button className="btn">Salvar produto</button></div></main></div>}
