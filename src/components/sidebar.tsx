@@ -22,7 +22,7 @@ export function Sidebar(){
       <Link href="/alertas">Alertas</Link>
       <Link href="/fornecedores">Fornecedores</Link>
       <Link href="/clientes">Clientes</Link>
-      <Link href="/relatorios">Relatórios</Link>
+      <Link href="/historico">Histórico</Link>\n      <Link href="/relatorios">Relatórios</Link>
       <Link href="/equipe">Equipe</Link>\n      <Link href="/ia">Assistente IA</Link>
     </nav>
     <button className="btn secondary" onClick={logout}>Sair</button>
