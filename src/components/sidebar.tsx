@@ -11,7 +11,7 @@ export function Sidebar(){
     <div className="brand">StockFlow</div>
     <nav className="nav">
       <Link href="/dashboard">Dashboard</Link>
-      <Link href="/produtos">Produtos</Link>
+      <Link href="/produtos">Produtos</Link>\n      <Link href="/scanner">Scanner</Link>
       <Link href="/categorias">Categorias</Link>
       <Link href="/compras">Compras</Link>
       <Link href="/vendas">Vendas</Link>
@@ -22,7 +22,7 @@ export function Sidebar(){
       <Link href="/alertas">Alertas</Link>
       <Link href="/fornecedores">Fornecedores</Link>
       <Link href="/clientes">Clientes</Link>
-      <Link href="/historico">Histórico</Link>\n      <Link href="/relatorios">Relatórios</Link>
+      <Link href="/historico">Histórico</Link>\n      <Link href="/relatorios">Relatórios</Link>\n      <Link href="/exportar">Exportar</Link>
       <Link href="/equipe">Equipe</Link>\n      <Link href="/ia">Assistente IA</Link>
     </nav>
     <button className="btn secondary" onClick={logout}>Sair</button>
