@@ -4,27 +4,24 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
+const items = [
+  ["Dashboard","/dashboard"],["Produtos","/produtos"],["Scanner","/scanner"],
+  ["Categorias","/categorias"],["Compras","/compras"],["Vendas","/vendas"],
+  ["Entradas","/entradas"],["Saídas","/saidas"],["Inventário","/inventario"],
+  ["Depósitos","/depositos"],["Alertas","/alertas"],["Fornecedores","/fornecedores"],
+  ["Clientes","/clientes"],["Histórico","/historico"],["Relatórios","/relatorios"],
+  ["Exportar","/exportar"],["Equipe","/equipe"],["Assistente IA","/ia"],
+];
+
 export function Sidebar(){
   const router=useRouter();
   async function logout(){const supabase=createClient();await supabase.auth.signOut();router.push("/login");router.refresh();}
   return <aside className="sidebar">
-    <div className="brand">StockFlow</div>
-    <nav className="nav">
-      <Link href="/dashboard">Dashboard</Link>
-      <Link href="/produtos">Produtos</Link>\n      <Link href="/scanner">Scanner</Link>
-      <Link href="/categorias">Categorias</Link>
-      <Link href="/compras">Compras</Link>
-      <Link href="/vendas">Vendas</Link>
-      <Link href="/entradas">Entradas</Link>
-      <Link href="/saidas">Saídas</Link>
-      <Link href="/inventario">Inventário</Link>
-      <Link href="/depositos">Depósitos</Link>
-      <Link href="/alertas">Alertas</Link>
-      <Link href="/fornecedores">Fornecedores</Link>
-      <Link href="/clientes">Clientes</Link>
-      <Link href="/historico">Histórico</Link>\n      <Link href="/relatorios">Relatórios</Link>\n      <Link href="/exportar">Exportar</Link>
-      <Link href="/equipe">Equipe</Link>\n      <Link href="/ia">Assistente IA</Link>
-    </nav>
-    <button className="btn secondary" onClick={logout}>Sair</button>
+    <div className="brand-wrap">
+      <div className="brand-mark">S</div>
+      <div><div className="brand">StockFlow</div><div className="brand-sub">Inventory OS</div></div>
+    </div>
+    <nav className="nav">{items.map(([label,href])=><Link key={href} href={href}>{label}</Link>)}</nav>
+    <div className="sidebar-footer"><button className="btn secondary" style={{width:"100%"}} onClick={logout}>Sair da conta</button></div>
   </aside>;
 }
