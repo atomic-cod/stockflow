@@ -69,7 +69,7 @@ export async function GET(request: Request) {
       .select("id,name,sku,barcode,brand,unit,lot,expiry_date,cost_price,sale_price,stock_quantity,minimum_stock,maximum_stock,location,active,created_at,category_id,supplier_id")
       .eq("active", true).order("created_at", { ascending: false });
 
-    if (q) query = query.ilike("name", "%" + q + "%");
+    if (q) query = query.or("name.ilike.%" + q + "%,sku.ilike.%" + q + "%,barcode.ilike.%" + q + "%");
     const { data: products, error } = await query;
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
