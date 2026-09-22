@@ -48,12 +48,13 @@ Execute as migrations nesta ordem no SQL Editor do Supabase:
 3. supabase/migrations/003_business_entities.sql
 4. supabase/migrations/004_stockflow_pro.sql
 5. supabase/migrations/005_stockflow_hardening.sql
+6. supabase/migrations/006_roles_permissions.sql
+7. supabase/migrations/007_operation_cancellation.sql
 
 As migrations 004 e 005 adicionam depósitos, inventário físico, auditoria, campos avançados de produto e regras adicionais de segurança.
 
 ## Próximas evoluções
 
-- Controle de permissões por papel
 - Leitura de código de barras pela câmera
 - Transferência entre depósitos
 - Exportação de relatórios
