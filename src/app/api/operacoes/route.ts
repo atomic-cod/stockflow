@@ -113,6 +113,34 @@ export async function POST(request: Request) {
     return NextResponse.json({ task: data });
   }
 
+  if (action === "create_order") {
+    const { data, error } = await supabase.rpc("create_fulfillment_order", {
+      p_warehouse_id: String(body.warehouse_id ?? ""),
+      p_order_number: String(body.order_number ?? ""),
+      p_customer_id: body.customer_id ? String(body.customer_id) : null,
+      p_priority: Number(body.priority ?? 2),
+      p_shipping_method: body.shipping_method ? String(body.shipping_method) : null,
+      p_notes: body.notes ? String(body.notes) : null,
+      p_items: Array.isArray(body.items) ? body.items : []
+    });
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json({ order_id: data }, { status: 201 });
+  }
+
+  if (action === "reserve_order" || action === "advance_order") {
+    const orderId = String(body.order_id ?? "");
+    const rpc = action === "reserve_order"
+      ? supabase.rpc("reserve_fulfillment_order", { p_order_id: orderId })
+      : supabase.rpc("advance_fulfillment_order", {
+          p_order_id: orderId,
+          p_action: String(body.order_action ?? ""),
+          p_tracking_code: body.tracking_code ? String(body.tracking_code) : null
+        });
+    const { data, error } = await rpc;
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json({ result: data });
+  }
+
   if (action === "address") {
     const { data, error } = await supabase.rpc("assign_product_location", {
       p_product_id: String(body.product_id ?? ""), p_warehouse_id: String(body.warehouse_id ?? ""), p_location_id: String(body.location_id ?? "")
