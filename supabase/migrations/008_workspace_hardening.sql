@@ -1,4 +1,37 @@
 -- StockFlow: workspace settings and warehouse hardening
+--
+-- Recovery guard: migration 006 is recorded in some environments while
+-- its role helper functions are missing from the live schema. Recreate them
+-- idempotently before policies below depend on them.
+
+create or replace function public.current_user_role()
+returns text
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select role
+  from public.profiles
+  where id = auth.uid()
+  limit 1;
+$$;
+
+revoke all on function public.current_user_role() from public;
+grant execute on function public.current_user_role() to authenticated;
+
+create or replace function public.has_role(p_roles text[])
+returns boolean
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select coalesce(public.current_user_role() = any(p_roles), false);
+$$;
+
+revoke all on function public.has_role(text[]) from public;
+grant execute on function public.has_role(text[]) to authenticated;
 
 -- Only workspace admins can change company settings.
 drop policy if exists "company admins update company" on public.companies;
