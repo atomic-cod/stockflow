@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { Box, Layers3, Map, Maximize2, Minus, Package, Plus, Rotate3D, Search, Warehouse, X } from "lucide-react";
@@ -89,7 +90,7 @@ export default function MapaEstoque() {
             <div className="panel-head"><div><div className="eyebrow">POSIÇÃO SELECIONADA</div><h2>{selected.location_code}</h2></div><button className="icon-btn" onClick={()=>setSelected(null)}><X size={16}/></button></div>
             <div className="location-hero"><div className="location-icon"><Layers3 size={24}/></div><div><b>{selected.location_name}</b><span>{selected.location_type.toUpperCase()} · {selected.utilization}% ocupado</span></div></div>
             <div className="mini-kpis"><div><small>OCUPAÇÃO</small><b>{selected.occupied}</b></div><div><small>CAPACIDADE</small><b>{selected.capacity ?? "—"}</b></div><div><small>ITENS</small><b>{selected.products.length}</b></div></div>
-            <div className="product-list">{selected.products.length ? selected.products.map(p=><div className="map-product" key={p.product_id}><div className="product-dot"><Package size={14}/></div><div><b>{p.name}</b><span>SKU {p.sku}</span><small>{p.quantity} {p.unit ?? "UN"}</small></div></div>) : <div className="empty-state">Posição livre.</div>}</div>
+            <div className="product-list">{selected.products.length ? selected.products.map(p=><Link className="map-product" key={p.product_id} href={"/produtos/"+p.product_id}><div className="product-dot"><Package size={14}/></div><div><b>{p.name}</b><span>SKU {p.sku}</span><small>{p.quantity} {p.unit ?? "UN"} · abrir ficha</small></div></Link>) : <div className="empty-state">Posição livre.</div>}</div>
           </> : <>
             <div className="eyebrow">EXPLORADOR 3D</div><h2>Selecione uma posição</h2><p className="muted">Clique em qualquer bloco do mapa para abrir a posição, ver os produtos armazenados e a ocupação.</p>
             <div className="explorer-tip"><Rotate3D size={18}/><span>Use os controles para aproximar, afastar e alterar a perspectiva.</span></div>
