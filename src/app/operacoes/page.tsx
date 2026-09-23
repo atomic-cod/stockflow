@@ -22,6 +22,8 @@ export default function Operacoes(){
   const [message,setMessage]=useState("");
   const [error,setError]=useState("");
   const [selectedTask,setSelectedTask]=useState("");
+  const [pickProductId,setPickProductId]=useState("");
+  const [pickQuantity,setPickQuantity]=useState("1");
   const [camera,setCamera]=useState(false);
   const videoRef=useRef<HTMLVideoElement>(null);
   const streamRef=useRef<MediaStream|null>(null);
@@ -104,7 +106,7 @@ export default function Operacoes(){
           <span>{i.status}</span><button className="btn" disabled={i.status==="picked"} onClick={()=>pick(i)}><CheckCircle2 size={15}/> Separar</button>
         </div>)}
       </div>)}
-      <div style={{marginTop:16}}><p className="muted">Itens pendentes: {pendingItems.length}</p></div>
+      <div className="card" style={{marginTop:16,border:"1px solid rgba(148,163,184,.18)"}}><strong>Adicionar item à ordem</strong><div style={{display:"grid",gridTemplateColumns:"2fr 1fr auto",gap:10,marginTop:10}}><select className="input" value={pickProductId} onChange={e=>setPickProductId(e.target.value)}><option value="">Selecione o produto...</option>{products.map(p=><option key={p.id} value={p.id}>{p.name} · {p.sku}</option>)}</select><input className="input" type="number" min="0.001" step="0.001" value={pickQuantity} onChange={e=>setPickQuantity(e.target.value)}/><button className="btn" disabled={!selectedTask||!pickProductId} onClick={async()=>{const r=await fetch("/api/operacoes",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"add_item",task_id:selectedTask,product_id:pickProductId,quantity:Number(pickQuantity)})});const d=await r.json();if(!r.ok){setError(d.error);return}setMessage("Item adicionado ao picking.");setPickProductId("");setPickQuantity("1");await load()}}>Adicionar</button></div><p className="muted" style={{marginTop:8}}>Abra uma ordem acima para adicionar itens.</p></div><div style={{marginTop:16}}><p className="muted">Itens pendentes: {pendingItems.length}</p></div>
     </section>}
 
     {tab==="enderecamento"&&<section className="card">
