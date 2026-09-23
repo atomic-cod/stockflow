@@ -35,7 +35,18 @@ export async function POST(request: Request) {
   } else if (question.includes("validade") || question.includes("venc")) {
     answer = expiring.length ? "Há " + expiring.length + " produto(s) com validade nos próximos 30 dias: " + expiring.slice(0,10).map(p=>p.name+" ("+new Date(p.expiry_date+"T00:00:00").toLocaleDateString("pt-BR")+")").join(", ") + "." : "Não encontrei produtos com validade nos próximos 30 dias.";
   } else if (question.includes("movimenta") || question.includes("últimas") || question.includes("ultimas")) {
-    answer = movements?.length ? "As últimas movimentações são: " + movements.slice(0,8).map(m=>m.type+" — "+(Array.isArray(m.products)?m.products[0]?.name:m.products?.name||"produto")+" ("+m.quantity+")").join("; ") + "." : "Ainda não existem movimentações registradas.";
+    answer = movements?.length
+      ? "As últimas movimentações são: " +
+        movements
+          .slice(0, 8)
+          .map((m) => {
+            const products = m.products as unknown as { name?: string }[] | { name?: string } | null;
+            const productName = Array.isArray(products) ? products[0]?.name : products?.name;
+            return m.type + " — " + (productName || "produto") + " (" + m.quantity + ")";
+          })
+          .join("; ") +
+        "."
+      : "Ainda não existem movimentações registradas.";
   }
 
   return NextResponse.json({ answer, metrics: { products: list.length, low: low.length, out: out.length, expiring: expiring.length, stock_value: value } });
