@@ -105,6 +105,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ item: data }, { status: 201 });
   }
 
+  if (action === "assign") {
+    const { data, error } = await supabase.rpc("assign_task", {
+      p_task_id: String(body.task_id ?? ""), p_user_id: body.user_id ? String(body.user_id) : null
+    });
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json({ task: data });
+  }
+
   if (action === "address") {
     const { data, error } = await supabase.rpc("assign_product_location", {
       p_product_id: String(body.product_id ?? ""), p_warehouse_id: String(body.warehouse_id ?? ""), p_location_id: String(body.location_id ?? "")
@@ -122,7 +130,10 @@ export async function PUT(request: Request) {
   const body = await request.json();
   if (body.action !== "pick") return NextResponse.json({ error: "Ação inválida." }, { status: 400 });
   const { data, error } = await supabase.rpc("confirm_picking_item", {
-    p_item_id: String(body.item_id ?? ""), p_quantity: Number(body.quantity), p_barcode: String(body.barcode ?? "") || null
+    p_item_id: String(body.item_id ?? ""),
+    p_quantity: Number(body.quantity),
+    p_barcode: String(body.barcode ?? "") || null,
+    p_location_id: body.location_id ? String(body.location_id) : null
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json({ result: data });
