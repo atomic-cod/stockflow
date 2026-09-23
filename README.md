@@ -90,11 +90,13 @@ Execute as migrations no SQL Editor do Supabase nesta ordem:
 11. `011_stock_consistency_function.sql`
 12. `012_operation_warehouse_binding.sql`
 13. `013_stock_map.sql`
+14. `014_operations_picking_addressing.sql`
 
 > As migrations são cumulativas. Execute cada uma uma única vez e, se alguma falhar, corrija a causa antes de avançar para a próxima.
 
 ## Próxima camada de produto
 
+- Central de Operações com scanner, picking e endereçamento físico
 - Transferências reais entre depósitos com saldo por localização
 - Curva ABC, giro e cobertura de estoque
 - Sugestão automática de reposição
