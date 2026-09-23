@@ -16,25 +16,23 @@ create index if not exists sales_warehouse_idx
 
 -- Backfill historical operations to the oldest active warehouse.
 update public.purchases p
-set warehouse_id = w.id
-from lateral (
-  select id
-  from public.warehouses
-  where company_id = p.company_id and active = true
-  order by created_at asc
+set warehouse_id = (
+  select w.id
+  from public.warehouses w
+  where w.company_id = p.company_id and w.active = true
+  order by w.created_at asc
   limit 1
-) w
+)
 where p.warehouse_id is null;
 
 update public.sales s
-set warehouse_id = w.id
-from lateral (
-  select id
-  from public.warehouses
-  where company_id = s.company_id and active = true
-  order by created_at asc
+set warehouse_id = (
+  select w.id
+  from public.warehouses w
+  where w.company_id = s.company_id and w.active = true
+  order by w.created_at asc
   limit 1
-) w
+)
 where s.warehouse_id is null;
 
 create or replace function public.apply_stock_movement_at_warehouse(
