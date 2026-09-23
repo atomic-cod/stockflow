@@ -16,11 +16,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Produto, tipo e quantidade válida são obrigatórios." }, { status: 400 });
   }
 
-  const { data, error } = await supabase.rpc("apply_stock_movement", {
+  const { data, error } = await supabase.rpc("apply_stock_movement_with_reference", {
     p_product_id: productId,
     p_type: type,
     p_quantity: quantity,
     p_reason: reason,
+    p_reference_id: null,
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
