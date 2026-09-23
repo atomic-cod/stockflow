@@ -7,7 +7,7 @@ const items=[
  ["Dashboard","/dashboard",LayoutDashboard],["Produtos","/produtos",Package],["Scanner","/scanner",ScanBarcode],
  ["Categorias","/categorias",FolderKanban],["Compras","/compras",ShoppingCart],["Vendas","/vendas",Truck],
  ["Entradas","/entradas",ArrowDownToLine],["Saídas","/saidas",ArrowUpFromLine],["Inventário","/inventario",ClipboardList],
- ["Depósitos","/depositos",Boxes],["Alertas","/alertas",AlertTriangle],["Fornecedores","/fornecedores",Database],
+ ["Depósitos","/depositos",Boxes],["Transferências","/transferencias",ArrowUpFromLine],["Alertas","/alertas",AlertTriangle],["Fornecedores","/fornecedores",Database],
  ["Clientes","/clientes",UserRound],["Histórico","/historico",Activity],["Relatórios","/relatorios",BarChart3],
  ["Exportar","/exportar",FileDown],["Equipe","/equipe",Users],["Assistente IA","/ia",BrainCircuit]
 ] as const;
