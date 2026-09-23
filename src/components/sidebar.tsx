@@ -2,9 +2,9 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { usePathname,useRouter } from "next/navigation";
-import { Activity,AlertTriangle,BarChart3,Boxes,BrainCircuit,ClipboardList,Database,FileDown,FolderKanban,LayoutDashboard,LogOut,Map,Package,ScanBarcode,Settings2,ShoppingCart,Truck,Users,UserRound,ArrowDownToLine,ArrowUpFromLine,ShieldCheck } from "lucide-react";
+import { Activity,AlertTriangle,BarChart3,Boxes,BrainCircuit,ClipboardList,Database,FileDown,FolderKanban,LayoutDashboard,LogOut,Map,Package,ScanBarcode,PackageCheck,Settings2,ShoppingCart,Truck,Users,UserRound,ArrowDownToLine,ArrowUpFromLine,ShieldCheck } from "lucide-react";
 const items=[
- ["Dashboard","/dashboard",LayoutDashboard],["Produtos","/produtos",Package],["Scanner","/scanner",ScanBarcode],
+ ["Dashboard","/dashboard",LayoutDashboard],["Produtos","/produtos",Package],["Scanner","/scanner",ScanBarcode],["Central de Operações","/operacoes",PackageCheck],
  ["Categorias","/categorias",FolderKanban],["Compras","/compras",ShoppingCart],["Vendas","/vendas",Truck],
  ["Entradas","/entradas",ArrowDownToLine],["Saídas","/saidas",ArrowUpFromLine],["Inventário","/inventario",ClipboardList],["Mapa do estoque","/mapa-estoque",Map],["Consistência","/inventario/consistencia",ShieldCheck],
  ["Depósitos","/depositos",Boxes],["Transferências","/transferencias",ArrowUpFromLine],["Alertas","/alertas",AlertTriangle],["Fornecedores","/fornecedores",Database],
