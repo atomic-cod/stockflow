@@ -23,7 +23,22 @@ export async function GET(request: Request) {
   const { data, error } = await supabase.rpc("get_warehouse_map", { p_warehouse_id: selected });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
-  const locations = (data ?? []).map((item: Record<string, unknown>) => ({
+  type MapProduct = Record<string, unknown>;
+  type MapLocation = {
+    occupied: number;
+    utilization: number;
+    x: number;
+    y: number;
+    z: number;
+    width: number;
+    depth: number;
+    height: number;
+    capacity: number | null;
+    products: MapProduct[];
+    [key: string]: unknown;
+  };
+
+  const locations: MapLocation[] = (data ?? []).map((item: Record<string, unknown>) => ({
     ...item,
     occupied: Number(item.occupied ?? 0),
     utilization: Number(item.utilization ?? 0),
@@ -37,8 +52,8 @@ export async function GET(request: Request) {
     products: Array.isArray(item.products) ? item.products : [],
   }));
 
-  const occupied = locations.reduce((sum, l) => sum + l.occupied, 0);
-  const capacity = locations.reduce((sum, l) => sum + (l.capacity ?? 0), 0);
+  const occupied = locations.reduce((sum: number, l: MapLocation) => sum + l.occupied, 0);
+  const capacity = locations.reduce((sum: number, l: MapLocation) => sum + (l.capacity ?? 0), 0);
 
   return NextResponse.json({
     warehouse: warehouses.find((w) => w.id === selected) ?? warehouses[0],
@@ -49,7 +64,7 @@ export async function GET(request: Request) {
       occupied,
       capacity,
       utilization: capacity ? Math.round((occupied / capacity) * 1000) / 10 : 0,
-      products: locations.reduce((sum, l) => sum + l.products.length, 0),
+      products: locations.reduce((sum: number, l: MapLocation) => sum + l.products.length, 0),
     },
   });
 }
