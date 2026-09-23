@@ -41,7 +41,12 @@ export async function POST(request: Request) {
     }).select().single();
 
     if (error) {
-      if (error.code === "23505") {\n        const message = error.message?.toLowerCase().includes("barcode")\n          ? "Já existe um produto com este código de barras nesta empresa."\n          : "Já existe um produto com este SKU nesta empresa.";\n        return NextResponse.json({ error: message }, { status: 409 });\n      }
+      if (error.code === "23505") {
+        const message = error.message?.toLowerCase().includes("barcode")
+          ? "Já existe um produto com este código de barras nesta empresa."
+          : "Já existe um produto com este SKU nesta empresa.";
+        return NextResponse.json({ error: message }, { status: 409 });
+      }
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
