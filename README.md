@@ -85,6 +85,11 @@ Execute as migrations no SQL Editor do Supabase nesta ordem:
 6. `006_roles_permissions.sql`
 7. `007_operation_cancellation.sql`
 8. `008_workspace_hardening.sql`
+9. `009_warehouse_stock.sql`
+10. `010_stock_warehouse_consistency.sql`
+11. `011_stock_consistency_function.sql`
+12. `012_operation_warehouse_binding.sql`
+13. `013_stock_map.sql`
 
 > As migrations são cumulativas. Execute cada uma uma única vez e, se alguma falhar, corrija a causa antes de avançar para a próxima.
 
