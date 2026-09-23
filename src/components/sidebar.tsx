@@ -6,7 +6,7 @@ import { Activity,AlertTriangle,BarChart3,Boxes,BrainCircuit,ClipboardList,Datab
 const items=[
  ["Dashboard","/dashboard",LayoutDashboard],["Produtos","/produtos",Package],["Scanner","/scanner",ScanBarcode],
  ["Categorias","/categorias",FolderKanban],["Compras","/compras",ShoppingCart],["Vendas","/vendas",Truck],
- ["Entradas","/entradas",ArrowDownToLine],["Saídas","/saidas",ArrowUpFromLine],["Inventário","/inventario",ClipboardList],["Consistência","/inventario/consistencia",ShieldCheck],
+ ["Entradas","/entradas",ArrowDownToLine],["Saídas","/saidas",ArrowUpFromLine],["Inventário","/inventario",ClipboardList],["Mapa do estoque","/mapa-estoque",Map],["Consistência","/inventario/consistencia",ShieldCheck],
  ["Depósitos","/depositos",Boxes],["Transferências","/transferencias",ArrowUpFromLine],["Alertas","/alertas",AlertTriangle],["Fornecedores","/fornecedores",Database],
  ["Clientes","/clientes",UserRound],["Histórico","/historico",Activity],["Relatórios","/relatorios",BarChart3],
  ["Exportar","/exportar",FileDown],["Equipe","/equipe",Users],["Assistente IA","/ia",BrainCircuit]
